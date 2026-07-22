@@ -2,7 +2,15 @@
 ===============================================================================
 DATA CLEANING AND PREPROCESSING
 ===============================================================================
-Project: Gamma 2 - Crop Yield Prediction
+
+DESCRIPTION:
+This module provides reusable functions for data cleaning and preprocessing.
+
+INPUT:  data/raw/Crop yield data.xlsx
+OUTPUT: data/processed/crop_yield_cleaned.csv
+        data/processed/crop_yield_scaled.csv
+        data/reports/*.png
+        data/reports/descriptive_statistics.csv
 ===============================================================================
 """
 
@@ -24,28 +32,23 @@ sns.set_palette("husl")
 # 1. PATH CONFIGURATION
 # ===========================================================================
 
-# Get the project root (since script is in src/)
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+def get_paths():
+    """Get project paths."""
+    # Get the project root (since script is in src/)
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Define paths
-RAW_DATA_PATH = os.path.join(PROJECT_ROOT, 'data', 'raw', 'Crop yield data.xlsx')
-PROCESSED_DIR = os.path.join(PROJECT_ROOT, 'data', 'processed')
-REPORTS_DIR = os.path.join(PROJECT_ROOT, 'data', 'reports')
+    paths = {
+        'project_root': project_root,
+        'raw_data': os.path.join(project_root, 'data', 'raw', 'Crop yield data.xlsx'),
+        'processed_dir': os.path.join(project_root, 'data', 'processed'),
+        'reports_dir': os.path.join(project_root, 'data', 'reports')
+    }
 
-# Create directories if they don't exist
-os.makedirs(PROCESSED_DIR, exist_ok=True)
-os.makedirs(REPORTS_DIR, exist_ok=True)
+    # Create directories if they don't exist
+    os.makedirs(paths['processed_dir'], exist_ok=True)
+    os.makedirs(paths['reports_dir'], exist_ok=True)
 
-print("="*80)
-print("🌾 DATA CLEANING AND PREPROCESSING")
-print("   Gamma 2 - Crop Yield Prediction")
-print("   Marina - Data Engineering Lead")
-print("="*80)
-print(f"\n📂 Project Root: {PROJECT_ROOT}")
-print(f"📂 Input:  {RAW_DATA_PATH}")
-print(f"📂 Output (Processed): {PROCESSED_DIR}")
-print(f"📊 Output (Reports): {REPORTS_DIR}")
-print("="*80)
+    return paths
 
 
 # ===========================================================================
@@ -53,7 +56,19 @@ print("="*80)
 # ===========================================================================
 
 def load_data(filepath):
-    """Load the crop yield dataset from Excel file."""
+    """
+    Load the crop yield dataset from Excel file.
+
+    Parameters:
+    -----------
+    filepath : str
+        Path to the Excel file
+
+    Returns:
+    --------
+    pd.DataFrame
+        Loaded dataset
+    """
     print("\n" + "="*80)
     print("STEP 1: LOAD DATA")
     print("="*80)
@@ -76,7 +91,19 @@ def load_data(filepath):
 # ===========================================================================
 
 def fix_column_names(df):
-    """Fix column name issues."""
+    """
+    Fix column name issues.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Input dataframe
+
+    Returns:
+    --------
+    pd.DataFrame
+        Dataframe with fixed column names
+    """
     print("\n" + "="*80)
     print("STEP 2: FIX COLUMN NAMES")
     print("="*80)
@@ -96,7 +123,19 @@ def fix_column_names(df):
 # ===========================================================================
 
 def check_data_quality(df):
-    """Check for missing values and duplicates."""
+    """
+    Check for missing values and duplicates.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Input dataframe
+
+    Returns:
+    --------
+    pd.DataFrame
+        Dataframe after quality checks
+    """
     print("\n" + "="*80)
     print("STEP 3: DATA QUALITY CHECK")
     print("="*80)
@@ -111,7 +150,6 @@ def check_data_quality(df):
         print("✅ No missing values in numerical columns!")
     else:
         print(f"⚠️ Missing values found in numerical columns:\n{missing_num[missing_num > 0]}")
-        # Fill only numerical columns with median
         for col in numerical_cols:
             if df[col].isnull().sum() > 0:
                 df[col] = df[col].fillna(df[col].median())
@@ -145,8 +183,22 @@ def check_data_quality(df):
 # 5. DESCRIPTIVE STATISTICS
 # ===========================================================================
 
-def descriptive_statistics(df):
-    """Generate and save descriptive statistics."""
+def descriptive_statistics(df, reports_dir):
+    """
+    Generate and save descriptive statistics.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Input dataframe
+    reports_dir : str
+        Directory to save statistics
+
+    Returns:
+    --------
+    pd.DataFrame
+        Descriptive statistics
+    """
     print("\n" + "="*80)
     print("STEP 4: DESCRIPTIVE STATISTICS")
     print("="*80)
@@ -157,7 +209,7 @@ def descriptive_statistics(df):
     print(stats)
 
     # Save statistics to reports
-    stats_path = os.path.join(REPORTS_DIR, 'descriptive_statistics.csv')
+    stats_path = os.path.join(reports_dir, 'descriptive_statistics.csv')
     stats.to_csv(stats_path)
     print(f"\n✅ Statistics saved to: {stats_path}")
 
@@ -169,7 +221,19 @@ def descriptive_statistics(df):
 # ===========================================================================
 
 def handle_outliers(df):
-    """Detect and treat outliers using IQR method."""
+    """
+    Detect and treat outliers using IQR method.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Input dataframe
+
+    Returns:
+    --------
+    tuple
+        (Dataframe with outliers treated, dict of outlier results)
+    """
     print("\n" + "="*80)
     print("STEP 5: OUTLIER DETECTION AND TREATMENT")
     print("="*80)
@@ -219,7 +283,19 @@ def handle_outliers(df):
 # ===========================================================================
 
 def create_features(df):
-    """Create new features from existing data."""
+    """
+    Create new features from existing data.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Input dataframe
+
+    Returns:
+    --------
+    tuple
+        (Dataframe with new features, LabelEncoder object)
+    """
     print("\n" + "="*80)
     print("STEP 6: FEATURE ENGINEERING")
     print("="*80)
@@ -274,7 +350,19 @@ def create_features(df):
 # ===========================================================================
 
 def standardize_features(df):
-    """Standardize numerical features using StandardScaler."""
+    """
+    Standardize numerical features using StandardScaler.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Input dataframe
+
+    Returns:
+    --------
+    tuple
+        (Scaled dataframe, StandardScaler object)
+    """
     print("\n" + "="*80)
     print("STEP 7: DATA STANDARDIZATION")
     print("="*80)
@@ -302,19 +390,35 @@ def standardize_features(df):
 # 9. SAVE DATA
 # ===========================================================================
 
-def save_data(df, df_scaled):
-    """Save cleaned and scaled data to data/processed/."""
+def save_data(df, df_scaled, processed_dir):
+    """
+    Save cleaned and scaled data to data/processed/.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Cleaned dataframe
+    df_scaled : pd.DataFrame
+        Scaled dataframe
+    processed_dir : str
+        Directory to save data
+
+    Returns:
+    --------
+    tuple
+        (Path to cleaned data, Path to scaled data)
+    """
     print("\n" + "="*80)
     print("STEP 8: SAVE CLEANED DATA")
     print("="*80)
 
     # Save cleaned data
-    output_path = os.path.join(PROCESSED_DIR, 'crop_yield_cleaned.csv')
+    output_path = os.path.join(processed_dir, 'crop_yield_cleaned.csv')
     df.to_csv(output_path, index=False)
     print(f"✅ Cleaned data saved to: {output_path}")
 
     # Save scaled data
-    scaled_path = os.path.join(PROCESSED_DIR, 'crop_yield_scaled.csv')
+    scaled_path = os.path.join(processed_dir, 'crop_yield_scaled.csv')
     df_scaled.to_csv(scaled_path, index=False)
     print(f"✅ Scaled data saved to: {scaled_path}")
 
@@ -325,8 +429,17 @@ def save_data(df, df_scaled):
 # 10. GENERATE VISUALIZATIONS
 # ===========================================================================
 
-def generate_visualizations(df):
-    """Generate and save visualizations to data/reports/."""
+def generate_visualizations(df, reports_dir):
+    """
+    Generate and save visualizations to data/reports/.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Input dataframe
+    reports_dir : str
+        Directory to save visualizations
+    """
     print("\n" + "="*80)
     print("STEP 9: GENERATE VISUALIZATIONS")
     print("="*80)
@@ -344,7 +457,7 @@ def generate_visualizations(df):
                 fmt='.2f', square=True, linewidths=0.5)
     plt.title('Correlation Matrix of Numerical Features', fontsize=14, fontweight='bold')
     plt.tight_layout()
-    plt.savefig(os.path.join(REPORTS_DIR, 'correlation_matrix.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(reports_dir, 'correlation_matrix.png'), dpi=300, bbox_inches='tight')
     plt.close()
     print("      ✅ correlation_matrix.png")
 
@@ -359,7 +472,7 @@ def generate_visualizations(df):
         axes[row, col_idx].set_xlabel(col)
         axes[row, col_idx].set_ylabel('Frequency')
     plt.tight_layout()
-    plt.savefig(os.path.join(REPORTS_DIR, 'distributions.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(reports_dir, 'distributions.png'), dpi=300, bbox_inches='tight')
     plt.close()
     print("      ✅ distributions.png")
 
@@ -372,7 +485,7 @@ def generate_visualizations(df):
         sns.boxplot(y=df[col], ax=axes[row, col_idx])
         axes[row, col_idx].set_title(f'Boxplot of {col}')
     plt.tight_layout()
-    plt.savefig(os.path.join(REPORTS_DIR, 'boxplots.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(reports_dir, 'boxplots.png'), dpi=300, bbox_inches='tight')
     plt.close()
     print("      ✅ boxplots.png")
 
@@ -383,7 +496,7 @@ def generate_visualizations(df):
     plt.title('Yield Distribution by Crop Type', fontsize=14, fontweight='bold')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig(os.path.join(REPORTS_DIR, 'yield_by_crop.png'), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(reports_dir, 'yield_by_crop.png'), dpi=300, bbox_inches='tight')
     plt.close()
     print("      ✅ yield_by_crop.png")
 
@@ -395,7 +508,18 @@ def generate_visualizations(df):
 # ===========================================================================
 
 def generate_summary(df, outlier_results, original_shape):
-    """Generate a summary of the data cleaning process."""
+    """
+    Generate a summary of the data cleaning process.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Cleaned dataframe
+    outlier_results : dict
+        Dictionary of outlier counts per column
+    original_shape : tuple
+        Original shape of the dataframe
+    """
     print("\n" + "="*80)
     print("📋 DATA CLEANING SUMMARY REPORT")
     print("="*80)
@@ -441,11 +565,30 @@ def generate_summary(df, outlier_results, original_shape):
 # 12. MAIN PIPELINE
 # ===========================================================================
 
-def run_pipeline(filepath):
-    """Complete data cleaning pipeline."""
+def run_pipeline(filepath=None):
+    """
+    Complete data cleaning pipeline.
+
+    Parameters:
+    -----------
+    filepath : str, optional
+        Path to the Excel file. If None, uses default path.
+
+    Returns:
+    --------
+    tuple
+        (Cleaned dataframe, Scaled dataframe, LabelEncoder, StandardScaler)
+    """
     print("\n" + "="*80)
     print("🚀 STARTING DATA CLEANING PIPELINE")
     print("="*80)
+
+    # Get paths
+    paths = get_paths()
+
+    # Use default path if not provided
+    if filepath is None:
+        filepath = paths['raw_data']
 
     # 1. Load data
     df = load_data(filepath)
@@ -461,7 +604,7 @@ def run_pipeline(filepath):
     df = check_data_quality(df)
 
     # 4. Descriptive statistics
-    stats = descriptive_statistics(df)
+    stats = descriptive_statistics(df, paths['reports_dir'])
 
     # 5. Handle outliers
     df, outlier_results = handle_outliers(df)
@@ -473,10 +616,10 @@ def run_pipeline(filepath):
     df_scaled, scaler = standardize_features(df)
 
     # 8. Save data
-    save_data(df, df_scaled)
+    save_data(df, df_scaled, paths['processed_dir'])
 
     # 9. Generate visualizations
-    generate_visualizations(df)
+    generate_visualizations(df, paths['reports_dir'])
 
     # 10. Generate summary
     generate_summary(df, outlier_results, original_shape)
@@ -487,15 +630,11 @@ def run_pipeline(filepath):
     print("="*80)
     print(f"""
 ✅ ALL FILES SAVED IN:
-   📂 Processed data: {PROCESSED_DIR}
-   📊 Reports: {REPORTS_DIR}
+   📂 Processed data: {paths['processed_dir']}
+   📊 Reports: {paths['reports_dir']}
 
-📈 THE DATA IS NOW READY FOR:
-   • Exploratory Data Analysis (EDA)
-   • Machine Learning Model Training
-   • Feature Selection and Engineering
+📈 THE DATA IS NOW READY 
 
-🚀 
 """)
 
     return df, df_scaled, label_encoder, scaler
@@ -506,4 +645,4 @@ def run_pipeline(filepath):
 # ===========================================================================
 
 if __name__ == "__main__":
-    df_cleaned, df_scaled, le, scaler = run_pipeline('data/raw/Crop yield data.xlsx')
+    df_cleaned, df_scaled, le, scaler = run_pipeline()
