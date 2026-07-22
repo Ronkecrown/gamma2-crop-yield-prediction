@@ -3,9 +3,6 @@
 DATA CLEANING AND PREPROCESSING
 ===============================================================================
 Project: Gamma 2 - Crop Yield Prediction
-Author: Marina (Data Engineering Lead)
-Role: Data Cleaning and Preprocessing
-Date: 2024
 ===============================================================================
 """
 
