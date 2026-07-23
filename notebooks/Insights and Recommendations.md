@@ -65,8 +65,7 @@ This aligns with the understanding that excessive heat can cause heat stress and
 **Crop Selection:** While this is a correlation, the data suggests that for the conditions in this dataset, Rice tends to perform better in terms of yield, whereas Wheat, Corn, and Sorghum show slightly lower yields. 
 
 
-
 Further analysis into specific environmental conditions for each crop type could provide more targeted recommendations.
 
-Regarding the Future Warning from seaborn, it indicates a deprecation. The current code still works but it's good practice to update it. I will fix the code cell to address this warning in the next iteration if needed, but for now, the plot is generated correctly.
+
 
