@@ -1,4 +1,4 @@
-rain_fall_mm,fertilizer,temperatue,nitrogen_n,phosphorus_p,potassium_k,yeild_qacre,crop_type
+rainfall,fertilizer,temperature,nitrogen,phosphorus,potassium,yield,crop_type
 1230,80,28,80,24,20,12.0,Corn
 480,60,36,70,20,18,8.0,Sorghum
 1250,75,29,78,22,19,11.0,Soybean
