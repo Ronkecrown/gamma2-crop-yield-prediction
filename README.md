@@ -35,5 +35,8 @@ The objectives are to:
 - `docs/` - Project documentation
 
 ## Project Status
+## Live Application
 
-In development.
+The Streamlit crop-yield prediction prototype is available at:
+
+[Open the Crop Yield Predictor](https://gamma2-crop-yield-predictor.streamlit.app/)
